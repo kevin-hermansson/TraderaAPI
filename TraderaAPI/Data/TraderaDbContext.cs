@@ -3,9 +3,9 @@ using TraderaAPI.Data.Models;
 
 namespace TraderaAPI.Data
 {
-    public class AuctionDbContext : DbContext
+    public class TraderaDbContext : DbContext
     {
-        public AuctionDbContext(DbContextOptions options) : base(options)
+        public TraderaDbContext(DbContextOptions options) : base(options)
         {
         }
 
