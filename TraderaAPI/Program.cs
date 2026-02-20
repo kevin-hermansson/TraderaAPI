@@ -18,6 +18,8 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuctionRepo, AuctionRepo>();
 builder.Services.AddScoped<IAuctionService, AuctionService>();
+builder.Services.AddScoped<IBidRepo, BidRepo>();
+builder.Services.AddScoped<IBidService, BidService>();
 
 var app = builder.Build();
 

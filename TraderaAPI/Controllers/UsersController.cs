@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TraderaAPI.Core.Interfaces;
 using TraderaAPI.DTOs;
 
 namespace TraderaAPI.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class UserController : Controller
+    [ApiController]
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
@@ -20,7 +21,7 @@ namespace TraderaAPI.Controllers
         {
             var result = await _userService.RegisterAsync(dto);
 
-            if (result == null) 
+            if (result == null)
                 return BadRequest("User already exists");
 
             return Ok(result);
@@ -31,10 +32,11 @@ namespace TraderaAPI.Controllers
         {
             var result = await _userService.LoginAsync(dto);
 
-            if (result == null) 
+            if (result == null)
                 return Unauthorized();
 
             return Ok(result);
         }
     }
 }
+
