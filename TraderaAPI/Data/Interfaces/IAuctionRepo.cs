@@ -7,5 +7,7 @@ namespace TraderaAPI.Data.Interfaces
         Task<Auction> AddAsync(Auction auction);
         Task<List<Auction>> GetOpenAuctionsAsync();
         Task<Auction?> GetByIdAsync(int id);
+        Task<bool> DeleteAsync(Auction auction);
+        Task <bool> UpdateAsync (Auction auction);
     }
 }

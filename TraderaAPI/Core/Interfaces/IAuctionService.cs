@@ -7,5 +7,7 @@ namespace TraderaAPI.Core.Interfaces
         Task<AuctionDto> CreateAsync(AuctionCreateDto dto);
         Task<List<AuctionDto>> GetOpenAsync();
         Task<AuctionDto?> GetByIdAsync(int id);
+        Task<bool> DeleteAsync(int auctionId, int userId);
+        Task<bool> UpdateAsync(int auctionId, AuctionUpdateDto dto);
     }
 }

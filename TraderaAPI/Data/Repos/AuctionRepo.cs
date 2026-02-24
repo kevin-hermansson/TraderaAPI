@@ -29,9 +29,23 @@ namespace TraderaAPI.Data.Repos
 
         public async Task<List<Auction>> GetOpenAuctionsAsync()
         {
-            return await _db.Auctions
+            return await _db.Auctions.Include(a => a.Bids)
                 .Where(a => a.EndDate > DateTime.Now)
                 .ToListAsync();
+        }
+
+        public async Task<bool> DeleteAsync(Auction auction)
+        {
+            _db.Auctions .Remove(auction);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateAsync (Auction auction)
+        {
+            _db.Auctions.Update(auction);
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

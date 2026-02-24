@@ -22,20 +22,20 @@ namespace TraderaAPI.Core.Services
                 Description = dto.Description,
                 StartPrice = dto.StartPrice,
                 StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
+                EndDate = dto.EndDate,
                 UserId = dto.UserId
             };
 
             var created = await _auctionRepo.AddAsync(auction);
 
-            return new AuctionDto 
+            return new AuctionDto
             {
                 Id = created.Id,
                 Title = created.Title,
                 Description = created.Description,
                 StartPrice = created.StartPrice,
                 StartDate = created.StartDate,
-                EndDate= created.EndDate,
+                EndDate = created.EndDate,
                 UserId = created.UserId
             };
         }
@@ -50,10 +50,10 @@ namespace TraderaAPI.Core.Services
             return new AuctionDto
             {
                 Id = auction.Id,
-                Title= auction.Title,
-                Description= auction.Description,
+                Title = auction.Title,
+                Description = auction.Description,
                 StartPrice = auction.StartPrice,
-                StartDate= auction.StartDate,
+                StartDate = auction.StartDate,
                 EndDate = auction.EndDate,
                 UserId = auction.UserId
             };
@@ -63,16 +63,77 @@ namespace TraderaAPI.Core.Services
         {
             var auctions = await _auctionRepo.GetOpenAuctionsAsync();
 
-            return auctions.Select(a => new AuctionDto
+            var result = new List<AuctionDto>();
+
+            foreach (var auction in auctions)
             {
-                Id= a.Id,
-                Title = a.Title,
-                Description = a.Description,
-                StartPrice = a.StartPrice,
-                StartDate = a.StartDate,
-                EndDate = a.EndDate,
-                UserId= a.UserId
-            }).ToList();
+                decimal currentPrice;
+
+                if (auction.Bids != null && auction.Bids.Count > 0)
+                {
+                    var highest = auction.Bids.OrderByDescending(b => b.Amount).First();
+
+                    currentPrice = highest.Amount;
+                }
+                else
+                {
+                    currentPrice = auction.StartPrice;
+                }
+
+
+                var dto = new AuctionDto
+                {
+                    Id = auction.Id,
+                    Title = auction.Title,
+                    Description = auction.Description,
+                    StartPrice = currentPrice,
+                    StartDate = auction.StartDate,
+                    EndDate = auction.EndDate,
+                    UserId = auction.UserId
+                };
+
+                result.Add(dto);
+            }
+            return result;
+
         }
+
+        public async Task<bool> DeleteAsync(int auctionId, int userId)
+        {
+            var auction = await _auctionRepo.GetByIdAsync(auctionId);
+
+            if (auction == null)
+                return false;
+
+            if (auction.UserId != userId)
+                return false;
+
+            if (auction.Bids != null && auction.Bids.Count > 0)
+                return false;
+
+            return await _auctionRepo.DeleteAsync(auction);
+        }
+
+        public async Task<bool> UpdateAsync(int auctionId, AuctionUpdateDto dto)
+        {
+            var auction = await _auctionRepo.GetByIdAsync(auctionId);
+
+            if (auction == null)
+                return false;
+            if (auction.UserId != dto.UserId)
+                return false;
+
+            auction.Title = dto.Title;
+            auction.Description = dto.Description;
+            auction.EndDate = dto.EndDate;
+
+            if (auction.Bids == null || auction.Bids.Count == 0)
+            {
+                auction.StartPrice = dto.StartPrice;
+            }
+
+            return await _auctionRepo.UpdateAsync(auction);
+        }
+
     }
 }

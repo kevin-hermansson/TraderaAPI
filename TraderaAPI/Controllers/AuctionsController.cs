@@ -37,4 +37,26 @@ public class AuctionController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpDelete("{id}/{userId}")]
+    public async Task<IActionResult> Delete(int id, int userId)
+    {
+        var success = await _auctionService.DeleteAsync(id, userId);
+
+        if (!success)
+            return BadRequest("Cant delete auction");
+
+        return Ok();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, AuctionUpdateDto dto)
+    {
+        var success = await _auctionService.UpdateAsync(id, dto);
+
+        if (!success)
+            return BadRequest();
+
+        return Ok();
+    }
 }
