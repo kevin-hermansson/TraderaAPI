@@ -47,12 +47,28 @@ namespace TraderaAPI.Core.Services
             if (auction == null)
                 return null;
 
+            decimal currentPrice;
+
+            if (auction.Bids != null && auction.Bids.Count > 0)
+            {
+                var highest = auction.Bids
+                    .OrderByDescending(b => b.Amount)
+                    .First();
+
+                currentPrice = highest.Amount;
+            }
+            else
+            {
+                currentPrice = auction.StartPrice;
+            }
+
             return new AuctionDto
             {
                 Id = auction.Id,
                 Title = auction.Title,
                 Description = auction.Description,
                 StartPrice = auction.StartPrice,
+                CurrentPrice = currentPrice,
                 StartDate = auction.StartDate,
                 EndDate = auction.EndDate,
                 UserId = auction.UserId
@@ -86,7 +102,8 @@ namespace TraderaAPI.Core.Services
                     Id = auction.Id,
                     Title = auction.Title,
                     Description = auction.Description,
-                    StartPrice = currentPrice,
+                    StartPrice = auction.StartPrice,
+                    CurrentPrice = currentPrice,
                     StartDate = auction.StartDate,
                     EndDate = auction.EndDate,
                     UserId = auction.UserId
